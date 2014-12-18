@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if user.is_superuser %}
+
+<script type="text/javascript">
+<!--
+function headsup()
+	{return confirm('Are you sure you want to delete this entry?');}
+
+-->
+</script>
+
+<div id="content">
+	<div>
+		<ul>	
+			<li><span class="bold">User name:</span> {{user.username}}</li>
+			<li><span class="bold">Full name:</span> {{user.first_name}}</li>
+			<li><span class="bold">E-mail:</span> {{user.email}}</li>
+			<li><a href="{% url 'index' %}">back</a></li>
+			<li><a id="id_logout" href="{% url 'logout' %}">Logout</a></li>
+		</ul>
+	</div>
+	{% if messages %}
+		<ul class="messages">
+		{% for message in messages %}
+			<li{% if message.tags %} class="{{message.tags}}"{% endif %}>{{message}}</li>
+		{% endfor %}
+		</ul>
+	{% endif %}
+
+	<h2>Add new user</h2>
+	<form id="add_user" method="post" action="{% url 'my_admin' %}">
+	{% csrf_token %}
+
+		<table>
+		{{form.as_table}}
+		</table>
+	<input type="submit" name="add" value="add" />
+	</form>
+
+
+	<div class="border_top">
+		{% if users %}
+		<table id="user_list">
+			<tr>
+				<th>username</th>
+				<th>fullname</th>
+				<th>e-mail</th>
+				<th></th>
+			</tr>
+		{% for u in users %}
+			<tr>
+				<td>{{u.username}}</td>
+				<td>{{u.first_name}}</td>
+				<td>{{u.email}}</td>
+				<td><a onclick='return headsup();' href="{% url 'delete_user' u.id %}">delete<a></td>
+			</tr>
+		{% endfor %}
+		</table>
+		{% else %}
+		<p>No user to show.</p>
+		{% endif %}
+
+	</div>
+</div>
+{% endif %}
+{% endblock %}

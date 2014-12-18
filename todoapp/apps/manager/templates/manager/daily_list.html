@@ -1,0 +1,134 @@
+{% extends 'manager/list.html' %}
+{% block list_content %}
+{% load staticfiles %}
+
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+	function showTooltip(btn){
+		var root = $(btn).closest('form');
+		var tr = $(btn).closest('tr');
+		var id=$(tr).attr('v');
+
+		var parent=$(btn).parent();
+		parent.css('position','relative');
+		var base=$('<div>');
+		base.addClass('sub');
+		var content=$('<div>');
+		base.css('position','absolute');
+		base.css('top','-205px');
+		base.css('left','-60px');
+		base.css('background','#ccc');
+		base.css('width','300px');
+		base.css('padding','10px 0px 10px 10px');
+		base.css('box-shadow','3px 3px 3px 0px gray');
+
+		content.css('height','160px');
+		content.css('overflow-y','auto');
+		content.css('color','#000');
+
+		
+		var pointer=$('<div>');
+
+		pointer.css('border','5px solid transparent');
+		pointer.css('border-top-color','#ccc');
+		pointer.css('position','absolute');
+		pointer.css('top','205px');
+		pointer.css('left','100px');
+
+		var img_p=$('<p>');
+		var img=$('<img>');
+		img.attr('src',"{% static 'image/btn_exit.png' %}");
+		img.css('cursor','pointer');
+		img_p.append(img)
+		img_p.css('text-align','right');
+		img_p.css('padding','0 5px 0 0');
+		img_p.css('margin','0');
+
+		var img_loader=$('<img>');
+		img_loader.attr('src',"{% static 'image/ajax-loader.gif' %}")
+
+		base.append(img_p);
+		base.append(content);
+		base.append(pointer);
+		parent.append(base);
+
+		img_p.click(function(e){
+			$(tr).find('.sub').remove();
+			return false;
+		});
+		var wrap_div=$('<div>');
+		var loder_p=$('<p>');
+		loder_p.append(img_loader);
+		loder_p.css('text-align','center');
+		wrap_div.append(loder_p);
+
+		$.ajax({
+			url: "/task/"+id+"/date_change/",
+			data: {
+				csrfmiddlewaretoken: '{{ csrf_token }}'
+			},
+			type: 'GET',
+			dataType: 'html',
+			cache: false,
+			success: function(response) {
+				loder_p.remove();
+				wrap_div.html(response);
+
+			},
+			error: function(xhr,errmsg,err) {
+				
+			},
+			complete: function() {
+			}
+		});
+		content.html(wrap_div);
+
+
+
+		return false;
+	}
+
+	$(".load").click(function(e){
+		return showTooltip(this);
+	});
+
+
+});
+</script>
+
+
+	<div>
+		<h2 class="title">My To-Do list {{today | date:'m/d/Y'}}</h2>
+		<form method="POST" action="/lists/{{list.id}}/add_task/">
+			{% csrf_token %}
+			<input name="item_text" id="id_new_item" placeholder="Enter your To-Do" />
+		</form>
+
+		<ul id="view_tab" class="clearfix">
+			<li class="bold"><a href="{% url 'view_list' list.id %}">Daily</a></li>
+			<li class="lline"><a href="{% url 'weekly_view_list' list.id %}">Weekly</a></li>
+			<li class="lline"><a href="{% url 'monthly_view_list' list.id %}">Monthly</a></li>
+		</ul>
+
+		{% if forms|length > 0 %}
+		<form method="POST" action="/lists/{{list.id}}/update_task/">
+		{% csrf_token %}
+		{{forms.management_form}}
+		
+		<table id="id_list_table">
+			<tr><th></th><th width="10%">Re-Sche</th><th width="10%">Cancel</th><th width="10%">Done</th></tr>
+			{% for form in forms %}
+			<tr v="{{form.task.id}}"><td>{{ forloop.counter }}: {{form.task.note}}</td><td style="text-align:center;"><a class="load" href=""><img src="{% static 'image/reschedu.png' %}" /></a></td><td>{{form.id}}{{form.canceled}}</td><td>{{form.completed}}</td></tr>
+			{% endfor %}
+		</table>
+		</form>
+		{% else %}
+		<p>You are all done, today!</p>
+		{% endif %}
+
+	</div>
+</div>
+{% endblock %}

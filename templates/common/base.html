@@ -1,0 +1,29 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<meta http-equiv="Content-Language" content="en-us">
+	<script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/jquery-ui.js' %}"></script>
+	<link href="{% static 'css/reset.css' %}" rel="stylesheet">
+	<link href="{% static 'css/layout.css' %}" rel="stylesheet">
+	<link href="{% static 'css/margin.css' %}" rel="stylesheet">
+	<link href="{% static 'js/jquery-ui.css' %}" rel="stylesheet">
+	
+
+	<title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+	<div id="wrapper">
+		<div id='header' class="clearfix">
+			<h1><a href="{% url 'index' %}">To-Do</a></h1>
+			
+
+
+			
+		</div>
+	{% block content %}{% endblock %}
+	</div>
+</body>
+</html>

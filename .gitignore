@@ -1,0 +1,5 @@
+venv
+*.pyc
+*~
+*.DS_Store
+todoapp/development_settings.py

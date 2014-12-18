@@ -1,0 +1,44 @@
+{% extends 'manager/list.html' %}
+{% block list_content %}
+	<div>
+		<h2 class="title">My To-Do list {{today | date:'m/d/Y'}}</h2>
+		<form method="POST" action="/lists/{{list.id}}/add_task/">
+			{% csrf_token %}
+			<input name="item_text" id="id_new_item" placeholder="Enter your To-Do" />
+		</form>
+
+		<ul id="view_tab" class="clearfix">
+			<li class=""><a href="{% url 'view_list' list.id %}">Daily</a></li>
+			<li class="lline"><a href="{% url 'weekly_view_list' list.id %}">Weekly</a></li>
+			<li class="bold lline"><a href="{% url 'monthly_view_list' list.id %}">Monthly</a></li>
+		</ul>
+		<p class="center bold">{{today | date:'F Y'}}</p>
+		<table id="id_list_table">
+			<tr>
+				<th>Mon.</th>
+				<th>Tue.</th>
+				<th>Wed.</th>
+				<th>Thu.</th>
+				<th>Fri.</th>
+				<th>Sat.</th>
+				<th>Sun.</th>
+			</tr>
+			{% for week in output %}
+			<tr>
+			{% for day,tasks,current in week %}
+				<td class={% if day == 0 %}"empty"{% endif %}{% if day != 0 and not current %}"day"{% endif %}
+				{% if day != 0 and current %}"current"{% endif %}>
+				{% if day != 0 %}<span class="italic">{{day}}</span>
+				{% for task in tasks %}
+				<br />
+				<span class="bold">{{ forloop.counter }}: </span>{{task.note}}
+				{% endfor %}
+				{% endif %}
+				</td>
+			{% endfor %}
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}To-Do lists{% endblock %}
+{% block content %}
+
+<script type="text/javascript">
+<!--
+$(document).ready(function(){
+	function block_form(){
+		$("select").attr('disabled','disabled');
+		$("input").attr('disabled','disabled');
+	}
+	function unblock_form(){
+		$("select").removeAttr('disabled');
+		$("input").removeAttr('disabled');
+
+	}
+	function updateTask(target){
+
+		var root = $(target).closest('form');
+		var tr = $(target).closest('tr');
+		var id=$(tr).attr('v');
+		var data = {};
+
+		$(tr).children().children().each(function(){
+			if($(this).attr('name')){
+				var name = $(this).attr('name');
+
+				if($(this).attr('type') == 'checkbox' ){
+					data[name]=$(this).prop('checked');
+				}
+				
+			}
+		});
+		data['csrfmiddlewaretoken']='{{ csrf_token }}'
+		block_form();
+		
+
+		$.ajax({
+			url: "/ajax/"+id+"/update_task/",
+			data: data,
+			type: 'POST',
+			dataType: 'text',
+			cache: false,
+			success: function(response) {
+				unblock_form();
+				console.log(response);
+				window.location.reload();
+							
+			},
+			error: function(errmsg) {
+				unblock_form();
+				console.log(errmsg.responseText);
+				window.location.reload();
+				
+			},
+			complete: function() {
+			
+			}
+		});
+
+
+	}
+	/*
+	$("#id_list_table tr td input").on('click',function(e){
+
+		updateTask(e.target);
+	});*/
+
+});
+
+-->
+</script>
+<div id="content">
+	<div>
+		{% include 'user-info.html' %}
+	</div>
+	{% if messages %}
+		<ul class="messages">
+		{% for message in messages %}
+			<li{% if message.tags %} class="{{message.tags}}"{% endif %}>{{message}}</li>
+		{% endfor %}
+		</ul>
+	{% endif %}
+
+	{% block list_content %}{% endblock %}
+</div>
+{% endblock %}

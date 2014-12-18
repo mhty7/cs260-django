@@ -1,0 +1,111 @@
+<style type="text/css">
+div.ui-datepicker {
+	font-size: 62%;
+}
+</style>
+<script type="text/javascript">
+<!--
+$(document).ready(function(){
+	function block_form(){
+		$("select").attr('disabled','disabled');
+		$("input").attr('disabled','disabled');
+	}
+	function unblock_form(){
+		$("select").removeAttr('disabled');
+		$("input").removeAttr('disabled');
+		$("#form_ajax_error").find(".errorlist").remove();
+		$("#form_ajax_error").hide();
+
+	}
+	function updateTask(target){
+
+		var root = $(target).closest('form');
+		var ul = $(root).find('ul');
+		var id='{{form.instance.id}}';
+		var data = {};
+
+		$(ul).children().children().each(function(){
+			if($(this).attr('name')){
+				var name = $(this).attr('name');
+
+				if($(this).attr('type') == 'checkbox' ){
+					data[name]=$(this).prop('checked');
+				}
+				else{
+					data[name]=$(this).val();
+				}
+				
+			}
+		});
+		data['csrfmiddlewaretoken']='{{ csrf_token }}'
+		console.log(data)
+		block_form();
+		
+
+		$.ajax({
+			url: "/task/"+id+"/date_change/",
+			data: data,
+			type: 'POST',
+			dataType: 'json',
+			cache: false,
+			success: function(response) {
+				unblock_form();
+				console.log(response);
+				window.location.reload();
+							
+			},
+			error: function(errmsg) {
+				unblock_form();
+				var errors = JSON.parse(errmsg.responseText);
+				var p=$('<p class="errorlist">');
+				p.html(errors['non_field_errors']);
+				$("#form_ajax_error").append(p);
+				$("#form_ajax_error").show();
+				console.log(errmsg.responseText);
+				//window.location.reload();
+				
+			},
+			complete: function() {
+			
+			}
+		});
+
+
+	}
+
+	$("#id_start_date").datepicker();
+	$("#id_end_date").datepicker();
+	$("#id_datechanger li.d").hide();
+	$("#id_recurring").click(function(e){
+		var c=$(this).prop('checked');
+		var ul = $(e.target).closest('ul');
+		if(c){
+			ul.children(".d").show();
+		}
+		else{
+			ul.children(".d").hide();
+		}
+	});
+	$("#id_datechanger").on('submit',function(e){
+		e.preventDefault();
+		updateTask(e.target);
+	});
+});
+
+-->
+</script>
+
+<div>
+	<form id="id_datechanger" method="post">
+		{% csrf_token %}
+		<ul>
+		<li id="form_ajax_error" style="display:none;" class="bold"></li>
+		<li><span>Date</span>{{form.start_date}}</li>
+		<li><span>Recurring</span>{{form.recurring}}</li>
+		<li class="d"><span>To date</span>{{form.end_date}}</li>
+		<li class="d"><span>Repeat</span>{{form.freq}}</li>
+		</ul>
+		<input type="submit" name="save" value="save" />
+
+	</form>
+<div>

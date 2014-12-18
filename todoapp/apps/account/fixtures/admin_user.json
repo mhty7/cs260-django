@@ -1,0 +1,20 @@
+[
+{
+  "fields": {
+    "last_login": "2014-12-08T13:23:33.191Z",
+    "groups": [],
+    "password": "pbkdf2_sha256$12000$RPL1tUznpdig$qXUGSMW/ZMfIs1+rViEjRGZiOK6i46dtqJw7h28SERA=",
+    "last_name": "",
+    "first_name": "",
+    "is_superuser": true,
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2014-12-06T17:15:18.698Z",
+    "user_permissions": [],
+    "email": "",
+    "username": "cs260"
+  },
+  "model": "auth.user",
+  "pk": 1
+}
+]

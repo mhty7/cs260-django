@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}To-Do lists{% endblock %}
+{% block content %}
+<div id="content">
+	<div>
+		{% include 'user-info.html' %}
+	</div>
+	{% if messages %}
+		<ul class="messages">
+		{% for message in messages %}
+			<li{% if message.tags %} class="{{message.tags}}"{% endif %}>{{message}}</li>
+		{% endfor %}
+		</ul>
+	{% endif %}
+	<div>
+		<h2 class="title">Start a new To-Do list</h2>
+		<form method="POST" action="/lists/new/">
+			{% csrf_token %}
+			<input name="item_text" id="id_new_item" placeholder="Enter your To-Do" />
+		</form>
+
+	</div>
+</div>
+{% endblock %}
